@@ -1,0 +1,49 @@
+name: Deploy Actions
+run-name: ${{ github.actor }} Deploy to server
+on:
+  release:
+  workflow_dispatch:
+jobs:
+  Deploy-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./backend
+      - name: Build the project
+        run: npm run build
+        working-directory: ./backend
+
+      - name: tar files in the repository
+        run: tar --exclude=node_modules --exclude=*/__tests__ --exclude=*.spec.js -cf package.tar ./backend/*
+      - name: copy file to server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SERVER_KEY }}
+          passphrase: ${{ secrets.SERVER_KEY_PASSPHRASE }}
+          source: "package.tar"
+          target: "/home/node/calc"
+      - name: init and run
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SERVER_KEY }}
+          passphrase: ${{ secrets.SERVER_KEY_PASSPHRASE }}
+          script: |
+            cd /home/node/calc
+            pm2 stop app.config.js
+            tar -xf package.tar
+            npm i
+            pm2 start app.config.js
