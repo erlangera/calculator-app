@@ -1,13 +1,9 @@
 name: Github pages
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  repository_dispatch:
-    types:
-      - rebuild-site
+  release:
+    # types: [created]
+  workflow_dispatch:
 # Build job
 jobs:
   build:
