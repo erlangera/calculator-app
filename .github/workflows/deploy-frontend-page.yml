@@ -15,7 +15,7 @@ jobs:
       with:
         node-version: '20'
     - name: To the root directory
-      run: cd ./frontend
+      run: cd frontend
     - name: Test
       run: pwd
     - name: Install dependencies
