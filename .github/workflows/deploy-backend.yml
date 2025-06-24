@@ -31,7 +31,7 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           key: ${{ secrets.SERVER_KEY }}
           passphrase: ${{ secrets.SERVER_KEY_PASSPHRASE }}
-          source: "backend-deployment.tar"
+          source: "backend-deployment.tar.gz"
           target: "/home/node/calc"
       # - name: init and run
       #   uses: appleboy/ssh-action@v1
