@@ -13,7 +13,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '16'
       - name: Install dependencies
         run: npm ci
         working-directory: ./backend
@@ -22,7 +22,7 @@ jobs:
         working-directory: ./backend
 
       - name: tar files in the repository
-        run: tar -czf backend-deployment.tar.gz -C backend dist package.json package-lock.json
+        run: tar -czf backend-deployment.tar.gz -C backend dist package.json ecosystem.config.js package-lock.json
       - name: copy file to server
         uses: appleboy/scp-action@v1
         with:
@@ -33,17 +33,17 @@ jobs:
           passphrase: ${{ secrets.SERVER_KEY_PASSPHRASE }}
           source: "backend-deployment.tar.gz"
           target: "/home/node/calc"
-      # - name: init and run
-      #   uses: appleboy/ssh-action@v1
-      #   with:
-      #     host: ${{ secrets.SERVER_HOST }}
-      #     username: ${{ secrets.SERVER_USER }}
-      #     port: ${{ secrets.SERVER_PORT }}
-      #     key: ${{ secrets.SERVER_KEY }}
-      #     passphrase: ${{ secrets.SERVER_KEY_PASSPHRASE }}
-      #     script: |
-      #       cd /home/node/calc
-      #       pm2 stop app.config.js
-      #       tar -xf package.tar
-      #       npm i
-      #       pm2 start app.config.js
+      - name: init and run
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          port: ${{ secrets.SERVER_PORT }}
+          key: ${{ secrets.SERVER_KEY }}
+          passphrase: ${{ secrets.SERVER_KEY_PASSPHRASE }}
+          script: |
+            cd /home/node/calc
+            pm2 stop ecosystem.config.js
+            tar -xf backend-deployment.tar.gz
+            npm ci
+            pm2 start ecosystem.config.js
