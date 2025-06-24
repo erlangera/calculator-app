@@ -22,7 +22,7 @@ jobs:
         working-directory: ./backend
 
       - name: tar files in the repository
-        run: tar -czf backend-deployment.tar.gz -C backend dist package.json ecosystem.config.js package-lock.json
+        run: tar -czf backend-deployment.tar.gz -C backend dist package.json ecosystem.config.json package-lock.json
       - name: copy file to server
         uses: appleboy/scp-action@v1
         with:
@@ -43,7 +43,7 @@ jobs:
           passphrase: ${{ secrets.SERVER_KEY_PASSPHRASE }}
           script: |
             cd /home/node/calc
-            pm2 stop ecosystem.config.js
+            pm2 stop ecosystem.config.json
             tar -xf backend-deployment.tar.gz
             npm ci
-            pm2 start ecosystem.config.js
+            pm2 start ecosystem.config.json
