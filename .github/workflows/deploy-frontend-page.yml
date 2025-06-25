@@ -24,6 +24,9 @@ jobs:
     - name: Build the project
       run: npm run build
       working-directory: ./frontend
+      env:
+        VITE_API_BASE_URL: ${{ env.VITE_API_BASE_URL }}
+        VITE_BASE: ${{ env.VITE_BASE }}
     - name: Upload static files as artifact
       id: deployment
       uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
