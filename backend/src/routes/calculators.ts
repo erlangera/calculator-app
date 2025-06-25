@@ -50,6 +50,7 @@ router.post('/', async (req, res) => {
     const addedCalculator = await db.addCalculator(newCalculator);
     res.status(201).json(addedCalculator);
   } catch (error) {
+    console.error(error);
     res.status(400).json({ message: 'Invalid formula' });
   }
 });
