@@ -10,7 +10,7 @@ function App() {
   };
 
   return (
-    <Router basename="/calculator-app">
+    <Router basename={import.meta.env.VITE_BASE}>
       <div className="min-h-screen bg-gradient-to-br from-brand-from to-brand-to text-white font-sans">
         <header className="p-4 shadow-md bg-white/5">
           <nav className="container mx-auto flex items-center justify-between">
