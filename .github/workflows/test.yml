@@ -1,0 +1,16 @@
+name: Test
+
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+  
+    steps:
+    - name: Display environment variables
+      run: |
+        echo "VITE_API_BASE_URL: ${{ env.VITE_API_BASE_URL }}"
+        echo "VITE_BASE: ${{ env.VITE_BASE }}"
+        echo "VITE_API_BASE_URL: $VITE_API_BASE_URL"
+        echo "VITE_BASE: $VITE_BASE"
+    
