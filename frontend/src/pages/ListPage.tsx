@@ -132,7 +132,10 @@ const ListPage: React.FC = () => {
                         </Link>
                         <button 
                           onClick={() => {
-                            navigator.clipboard.writeText(`${window.location.origin}/calculator/${calculator.id}`)
+                            const base = import.meta.env.VITE_BASE || '';
+                            const basePath = base.endsWith('/') ? base.slice(0, -1) : base;
+                            const url = `${window.location.origin}${basePath}/calculator/${calculator.id}`;
+                            navigator.clipboard.writeText(url)
                               .then(() => alert('链接已复制到剪贴板！'))
                               .catch(() => alert('复制失败'));
                           }}

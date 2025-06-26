@@ -6,6 +6,12 @@ import { Calculator } from '../types/index.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dataPath = path.resolve(__dirname, '../../data/calculators.json');
+const dataDir = path.dirname(dataPath);
+
+// 确保数据目录存在
+async function ensureDataDir(): Promise<void> {
+  await fs.ensureDir(dataDir);
+}
 
 interface DbSchema {
   calculators: Calculator[];
@@ -13,6 +19,7 @@ interface DbSchema {
 
 async function readData(): Promise<DbSchema> {
   try {
+    await ensureDataDir();
     const data = await fs.readJson(dataPath);
     return data;
   } catch (error) {
@@ -22,6 +29,7 @@ async function readData(): Promise<DbSchema> {
 }
 
 async function writeData(data: DbSchema): Promise<void> {
+  await ensureDataDir();
   await fs.writeJson(dataPath, data, { spaces: 2 });
 }
 
