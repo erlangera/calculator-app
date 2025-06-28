@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
 
 // POST /api/calculators - Create a new calculator
 router.post('/', async (req, res) => {
-  const { title, description, formula } = req.body;
+  const { title, description, formula, variableLabels } = req.body;
 
   if (!title || !formula) {
     return res.status(400).json({ message: 'Title and formula are required' });
@@ -43,6 +43,7 @@ router.post('/', async (req, res) => {
       description: description || '',
       formula,
       variables,
+      variableLabels: variableLabels || {},
       createdAt: now,
       updatedAt: now,
     };
@@ -57,7 +58,7 @@ router.post('/', async (req, res) => {
 
 // PUT /api/calculators/:id - Update a calculator
 router.put('/:id', async (req, res) => {
-    const { title, description, formula } = req.body;
+    const { title, description, formula, variableLabels } = req.body;
   
     if (!title || !formula) {
       return res.status(400).json({ message: 'Title and formula are required' });
@@ -72,6 +73,7 @@ router.put('/:id', async (req, res) => {
         description,
         formula,
         variables,
+        variableLabels: variableLabels || {},
         updatedAt,
       };
   

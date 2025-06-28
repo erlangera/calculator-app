@@ -18,14 +18,12 @@ const CalculatorPage: React.FC = () => {
     if (id) {
       getCalculatorById(id)
         .then(data => {
-          console.log('Calculator data:', data); // 调试信息
           setCalculator(data);
           const initialValues: Record<string, string> = {};
           // 确保 variables 存在且是数组
           if (data.variables && Array.isArray(data.variables)) {
             data.variables.forEach(v => { initialValues[v] = '5'; });
           }
-          console.log('Initial values:', initialValues); // 调试信息
           setVariableValues(initialValues);
         })
         .catch(err => {
@@ -37,10 +35,8 @@ const CalculatorPage: React.FC = () => {
   }, [id]);
 
   const handleVariableChange = (variable: string, value: string) => {
-    console.log('Variable change:', variable, value); // 调试信息
     setVariableValues(prev => {
       const newValues = { ...prev, [variable]: value };
-      console.log('New variable values:', newValues); // 调试信息
       return newValues;
     });
   };
@@ -58,12 +54,10 @@ const CalculatorPage: React.FC = () => {
       const numericValues = Object.fromEntries(
         Object.entries(variableValues).map(([key, value]) => [key, parseFloat(value)])
       );
-      console.log('Numeric values for calculation:', numericValues); // 调试信息
       const calculatedResult = evaluate(calculator.formula, numericValues);
-      console.log('Calculated result:', calculatedResult); // 调试信息
       return calculatedResult;
     } catch (error) {
-      console.error('Calculation error:', error); // 调试信息
+      console.error('Calculation error:', error);
       return NaN;
     }
   }, [calculator, variableValues]);
@@ -129,13 +123,13 @@ const CalculatorPage: React.FC = () => {
               calculator.variables.map(variable => (
                 <div key={variable} className="flex items-center bg-gray-50 p-4 rounded-xl">
                   <label className="min-w-[100px] text-lg font-semibold text-brand-from capitalize">
-                    {variable === 'r' ? '半径' : variable} ({variable}):
+                    {calculator.variableLabels?.[variable] || variable} ({variable}):
                   </label>
                   <input
                     type="number"
                     value={variableValues[variable] || ''}
                     onChange={(e) => handleVariableChange(variable, e.target.value)}
-                    placeholder={`请输入${variable === 'r' ? '半径' : variable}`}
+                    placeholder={`请输入${calculator.variableLabels?.[variable] || variable}`}
                     className="flex-1 ml-5 px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-brand-from focus:bg-white transition-all duration-300 text-lg text-black"
                   />
                 </div>
@@ -156,12 +150,6 @@ const CalculatorPage: React.FC = () => {
               {isNaN(result) ? '...' : result.toFixed(2)}
             </div>
           </div>
-        </div>
-
-        {/* Debug Info (可以在生产环境中移除) */}
-        <div className="mb-4 p-4 bg-gray-100 rounded-lg text-sm text-black">
-          <p><strong>Variables:</strong> {JSON.stringify(calculator.variables)}</p>
-          <p><strong>Current Values:</strong> {JSON.stringify(variableValues)}</p>
         </div>
 
         {/* Action Buttons */}

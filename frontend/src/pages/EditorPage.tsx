@@ -9,6 +9,7 @@ interface IFormInput {
   title: string;
   description: string;
   formula: string;
+  variableLabels: Record<string, string>;
 }
 
 const extractVariables = (formula: string): string[] => {
@@ -35,7 +36,8 @@ const EditorPage: React.FC = () => {
     defaultValues: {
       title: '圆面积计算器',
       description: '计算圆的面积，输入半径即可',
-      formula: '3.14159 * r^2'
+      formula: '3.14159 * r^2',
+      variableLabels: { r: '半径' }
     }
   });
   
@@ -44,6 +46,7 @@ const EditorPage: React.FC = () => {
   const [previewResult, setPreviewResult] = useState<string>('78.54');
 
   const formulaValue = watch('formula', '3.14159 * r^2');
+  const variableLabelsValue = watch('variableLabels', { r: '半径' });
   const liveVariables = useMemo(() => extractVariables(formulaValue), [formulaValue]);
 
   useEffect(() => {
@@ -52,6 +55,7 @@ const EditorPage: React.FC = () => {
         setValue('title', data.title);
         setValue('description', data.description || '');
         setValue('formula', data.formula);
+        setValue('variableLabels', data.variableLabels || {});
       });
     }
   }, [id, isEditMode, setValue]);
@@ -114,6 +118,13 @@ const EditorPage: React.FC = () => {
     }));
   };
 
+  const handleVariableLabelChange = (variable: string, label: string) => {
+    setValue('variableLabels', {
+      ...variableLabelsValue,
+      [variable]: label
+    });
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }} 
@@ -168,6 +179,30 @@ const EditorPage: React.FC = () => {
                 {errors.formula && <p className="text-red-500 text-sm mt-1">{errors.formula.message}</p>}
                 {formulaError && <p className="text-red-500 text-sm mt-1">语法错误: {formulaError}</p>}
               </div>
+
+              {/* Variable Labels Section */}
+              {liveVariables.length > 0 && (
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">变量标签设置</label>
+                  <div className="space-y-3">
+                    {liveVariables.map(variable => (
+                      <div key={variable} className="flex items-center gap-3">
+                        <span className="text-sm font-mono text-gray-600 min-w-[20px]">{variable}:</span>
+                        <input
+                          type="text"
+                          value={variableLabelsValue[variable] || ''}
+                          onChange={(e) => handleVariableLabelChange(variable, e.target.value)}
+                          placeholder={`${variable}的标签（如：半径）`}
+                          className="flex-1 px-3 py-2 rounded-lg border-2 border-gray-200 bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:border-brand-from transition-all duration-300"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-500 mt-2">
+                    为每个变量设置友好的显示标签，留空则使用变量名
+                  </p>
+                </div>
+              )}
               
               <div className="flex gap-4 pt-4">
                 <button 
@@ -209,7 +244,7 @@ const EditorPage: React.FC = () => {
                   {liveVariables.map(variable => (
                     <div key={variable} className="text-center">
                       <label className="block text-sm font-semibold mb-2 text-brand-from capitalize">
-                        {variable === 'r' ? '半径' : variable} ({variable})
+                        {variableLabelsValue[variable] || variable} ({variable})
                       </label>
                       <input
                         type="number"

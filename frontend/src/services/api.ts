@@ -16,7 +16,9 @@ export const getCalculatorById = (id: string): Promise<Calculator> => {
     return apiClient.get(`/calculators/${id}`).then(res => res.data);
 };
 
-export type CreateCalculatorData = Omit<Calculator, 'id' | 'variables' | 'createdAt' | 'updatedAt'>;
+export type CreateCalculatorData = Omit<Calculator, 'id' | 'variables' | 'createdAt' | 'updatedAt'> & {
+  variableLabels?: Record<string, string>;
+};
 
 export const createCalculator = (data: CreateCalculatorData): Promise<Calculator> => {
     return apiClient.post('/calculators', data).then(res => res.data);
