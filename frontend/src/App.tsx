@@ -13,13 +13,13 @@ function App() {
     <Router basename={import.meta.env.VITE_BASE}>
       <div className="min-h-screen bg-gradient-to-br from-brand-from to-brand-to text-white font-sans">
         <header className="p-4 shadow-md bg-white/5">
-          <nav className="container mx-auto flex items-center justify-between">
-            <h1 className="text-2xl font-bold">FormulaCalc</h1>
-            <ul className="flex items-center space-x-4">
+          <nav className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0">
+            <h1 className="text-lg sm:text-2xl font-bold whitespace-nowrap truncate">FormulaCalc</h1>
+            <ul className="flex flex-wrap items-center gap-2 sm:gap-4">
               <li>
                 <NavLink 
                   to="/" 
-                  className="px-4 py-2 rounded-md transition"
+                  className="px-3 py-1 sm:px-4 sm:py-2 rounded-md transition text-sm sm:text-base"
                   style={({ isActive }) => isActive ? activeLinkStyle : {}}
                 >
                   My Calculators
@@ -28,7 +28,7 @@ function App() {
               <li>
                 <NavLink 
                   to="/new" 
-                  className="px-4 py-2 rounded-md transition"
+                  className="px-3 py-1 sm:px-4 sm:py-2 rounded-md transition text-sm sm:text-base"
                   style={({ isActive }) => isActive ? activeLinkStyle : {}}
                 >
                   Create New

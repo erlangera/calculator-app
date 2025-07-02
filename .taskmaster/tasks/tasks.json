@@ -168,7 +168,7 @@
         "dependencies": [
           5
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -187,7 +187,7 @@
               1
             ],
             "details": "This includes using grid, flexbox, and other layout utilities to ensure content is displayed correctly on various devices.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -198,7 +198,7 @@
               2
             ],
             "details": "This involves targeting smaller screen sizes with custom styles to improve the mobile user experience, such as adjusting font sizes, spacing, and navigation.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -284,7 +284,7 @@
     ],
     "metadata": {
       "created": "2025-07-02T07:55:05.512Z",
-      "updated": "2025-07-02T08:16:38.734Z",
+      "updated": "2025-07-02T09:31:04.438Z",
       "description": "Tasks for master context"
     }
   }
