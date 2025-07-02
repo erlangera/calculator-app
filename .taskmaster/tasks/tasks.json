@@ -1,0 +1,291 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Backend with Node.js, TypeScript, and Express",
+        "description": "Initialize the Node.js backend with TypeScript, setting up the basic Express.js server.",
+        "details": "1.  Initialize a new Node.js project with `npm init -y`.\n2.  Install required dependencies: `npm install express typescript @types/express @types/node nodemon ts-node fs-extra`.\n3.  Configure `tsconfig.json` for TypeScript compilation.\n4.  Create `src/index.ts` with a basic Express server setup.\n5.  Implement basic middleware for request logging and error handling.\n6.  Configure `nodemon` for automatic server restarts on file changes.\n7.  Create a `.env` file to store configuration variables.\n8.  Set up a basic route to test the server (e.g., `/api/health`).\n\nRecommended versions:\n*   express: ^4.18.2\n*   typescript: ^5.2.2\n*   nodemon: ^3.0.1\n*   ts-node: ^10.9.1\n*   fs-extra: ^11.1.1",
+        "testStrategy": "Send a GET request to the `/api/health` endpoint and verify that the server returns a 200 OK status code with a success message.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install Backend Dependencies",
+            "description": "Install necessary npm packages for the backend, including express, cors, dotenv, and any database drivers.",
+            "dependencies": [],
+            "details": "Use npm or yarn to install dependencies listed in package.json or identified as required for the project.\n<info added on 2025-07-02T08:01:54.549Z>\n✅ 后端依赖安装成功完成！\n\n**安装结果：**\n- 成功安装了 186 个npm包\n- 未发现安全漏洞\n- 所有必需的依赖都已正确安装，包括：\n  - express: Web框架\n  - cors: 跨域处理\n  - mathjs: 数学计算引擎\n  - fs-extra: 文件系统操作\n  - typescript: TypeScript编译器\n  - nodemon: 开发时自动重启\n  - 以及所有相关的@types包\n\n**安装命令：**\n```bash\ncd backend\nnpm install\n```\n\n依赖安装环节已完成，可以进入下一个子任务：配置tsconfig.json\n</info added on 2025-07-02T08:01:54.549Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Configure tsconfig.json",
+            "description": "Set up the tsconfig.json file to define TypeScript compilation options.",
+            "dependencies": [
+              1
+            ],
+            "details": "Configure compiler options like target, module, outDir, and sourceMap to ensure proper TypeScript compilation.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Middleware",
+            "description": "Implement global middleware for tasks like CORS, request logging, and body parsing.",
+            "dependencies": [
+              2
+            ],
+            "details": "Create and configure middleware functions to handle cross-origin requests, log incoming requests, and parse request bodies (JSON, URL-encoded).",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Set Up API Routes",
+            "description": "Define and implement API routes for different functionalities.",
+            "dependencies": [
+              3
+            ],
+            "details": "Create route handlers for different endpoints (e.g., GET, POST, PUT, DELETE) and associate them with specific controller functions.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Configure Nodemon",
+            "description": "Set up Nodemon for automatic server restarts during development.",
+            "dependencies": [
+              2
+            ],
+            "details": "Configure Nodemon to watch for file changes and automatically restart the server, improving the development workflow.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Implement Calculator Management API Endpoints",
+        "description": "Implement API endpoints for calculator management (CRUD operations) using Express.js.",
+        "details": "1.  Define the data structure for calculator configurations (as provided in the PRD).\n2.  Implement the following API endpoints:\n    *   `GET /api/calculators`: Retrieve all calculators.\n    *   `POST /api/calculators`: Create a new calculator.\n    *   `GET /api/calculators/:id`: Retrieve a specific calculator by ID.\n    *   `PUT /api/calculators/:id`: Update a calculator.\n    *   `DELETE /api/calculators/:id`: Delete a calculator.\n3.  Use `fs-extra` to read and write calculator data to JSON files.\n4.  Implement error handling for each endpoint (e.g., handling invalid IDs, file read/write errors).\n5.  Validate request bodies to ensure data integrity.\n\nRecommended versions:\n*   fs-extra: ^11.1.1",
+        "testStrategy": "Use tools like `Postman` or `Insomnia` to test each API endpoint. Verify that the endpoints return the correct data and status codes. Test error handling by sending invalid requests.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Integrate Math.js for Formula Calculation",
+        "description": "Integrate Math.js into the backend to handle formula parsing, validation, and calculation.",
+        "details": "1.  Install Math.js: `npm install mathjs`.\n2.  Create a utility function to parse and validate mathematical formulas using Math.js.\n3.  Implement the `/api/calculate` endpoint to accept a formula and variable values.\n4.  Use Math.js to evaluate the formula with the provided values.\n5.  Return the calculated result as a JSON response.\n6.  Implement error handling for invalid formulas and calculation errors.\n\nRecommended versions:\n*   mathjs: ^11.11.1",
+        "testStrategy": "Send POST requests to the `/api/calculate` endpoint with various formulas and variable values. Verify that the endpoint returns the correct results and handles errors appropriately.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Setup React Frontend with TypeScript and Vite",
+        "description": "Set up the React frontend with TypeScript and Vite.",
+        "details": "1.  Create a new React project with Vite using the TypeScript template: `npm create vite@latest my-calculator-app --template react-ts`.\n2.  Install required dependencies: `npm install react react-dom @types/react @types/react-dom vite tailwindcss postcss autoprefixer react-hook-form mathjs axios framer-motion`.\n3.  Configure `tsconfig.json` for TypeScript compilation.\n4.  Set up basic routing using `react-router-dom` if needed.\n5.  Create a basic layout with header, main content, and footer sections.\n\nRecommended versions:\n*   react: ^18.2.0\n*   vite: ^4.4.5\n*   typescript: ^5.2.2",
+        "testStrategy": "Run the development server using `npm run dev` and verify that the React application loads correctly in the browser. Check the console for any errors.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Configure Tailwind CSS",
+        "description": "Configure Tailwind CSS for styling the application.",
+        "details": "1.  Install Tailwind CSS and its peer dependencies: `npm install -D tailwindcss postcss autoprefixer`.\n2.  Initialize Tailwind CSS: `npx tailwindcss init -p`.\n3.  Configure Tailwind CSS in `tailwind.config.js`.\n4.  Add Tailwind directives to `src/index.css`.\n5.  Import `src/index.css` in `src/main.tsx`.\n6.  Start using Tailwind CSS classes in React components.\n\nRecommended versions:\n*   tailwindcss: ^3.3.2",
+        "testStrategy": "Inspect the application in the browser and verify that Tailwind CSS styles are applied correctly. Check for any CSS errors in the console.",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Create Formula Editor Component",
+        "description": "Create a formula editor component using React Hook Form and Math.js for input, validation, and preview.",
+        "details": "1.  Install React Hook Form: `npm install react-hook-form @hookform/resolvers`.\n2.  Create a `FormulaEditor` component with a text input field for entering mathematical formulas.\n3.  Use React Hook Form to handle form state and validation.\n4.  Integrate Math.js to validate the formula syntax in real-time.\n5.  Display error messages for invalid formulas.\n6.  Implement a preview feature to show the rendered formula.\n\nRecommended versions:\n*   react-hook-form: ^7.45.4\n*   @hookform/resolvers: ^3.3.2",
+        "testStrategy": "Enter various mathematical formulas into the `FormulaEditor` component and verify that the validation works correctly. Check that error messages are displayed for invalid formulas and that the preview feature shows the rendered formula.",
+        "priority": "medium",
+        "dependencies": [
+          4,
+          5
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Interactive Calculator Interface",
+        "description": "Implement the interactive calculator interface that dynamically generates input fields based on the formula.",
+        "details": "1.  Create a `Calculator` component that receives a formula and a list of variables as props.\n2.  Dynamically generate input fields for each variable using React Hook Form.\n3.  Support different input types (number, slider, dropdown) based on variable properties.\n4.  Use Math.js to calculate the result in real-time as the user enters values.\n5.  Display the calculated result.\n\nRecommended versions:\n*   react-hook-form: ^7.45.4",
+        "testStrategy": "Enter values into the dynamically generated input fields and verify that the calculator calculates the correct result in real-time. Test different input types and ensure that they work as expected.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          6
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Calculator Management Functionality",
+        "description": "Implement functionality to save, load, edit, and delete calculator configurations.",
+        "details": "1.  Create a `CalculatorList` component to display a list of saved calculators.\n2.  Implement buttons to edit and delete calculators.\n3.  Use the API endpoints to save, load, edit, and delete calculator configurations.\n4.  Update the UI to reflect changes in the calculator list.\n\nRecommended versions:\n*   axios: ^1.4.0",
+        "testStrategy": "Create, edit, and delete calculator configurations and verify that the changes are reflected in the UI and the backend data store. Check for any errors during these operations.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          7
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Improve UI/UX Design and Responsiveness",
+        "description": "Enhance the UI with modern design elements and ensure a responsive layout.",
+        "details": "1.  Use Tailwind CSS to style the application with a modern design.\n2.  Implement a responsive layout that adapts to different screen sizes.\n3.  Use media queries to adjust the layout and styles for mobile devices.\n\nRecommended versions:\n*   tailwindcss: ^3.3.2",
+        "testStrategy": "Test the application on different devices and screen sizes to ensure that the layout is responsive and the UI looks good on all devices.",
+        "priority": "low",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Style UI Elements with Tailwind CSS",
+            "description": "Apply Tailwind CSS classes to style all UI elements, ensuring visual consistency and adherence to the design guidelines.",
+            "dependencies": [],
+            "details": "This involves replacing existing CSS styles with Tailwind CSS utility classes for elements like buttons, forms, typography, and navigation.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Responsive Layout with Tailwind CSS",
+            "description": "Utilize Tailwind CSS's responsive modifiers to create a flexible and adaptable layout that adjusts to different screen sizes.",
+            "dependencies": [
+              1
+            ],
+            "details": "This includes using grid, flexbox, and other layout utilities to ensure content is displayed correctly on various devices.",
+            "status": "in-progress",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Optimize for Mobile Devices with Media Queries",
+            "description": "Implement specific styling and layout adjustments for mobile devices using Tailwind CSS's built-in media query features.",
+            "dependencies": [
+              2
+            ],
+            "details": "This involves targeting smaller screen sizes with custom styles to improve the mobile user experience, such as adjusting font sizes, spacing, and navigation.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Add Animations and Transitions with Framer Motion",
+        "description": "Add smooth animations and transitions using Framer Motion.",
+        "details": "1.  Install Framer Motion: `npm install framer-motion`.\n2.  Use Framer Motion to add animations and transitions to UI elements.\n3.  Implement animations for loading states, form submissions, and other interactions.\n\nRecommended versions:\n*   framer-motion: ^10.12.18",
+        "testStrategy": "Verify that the animations and transitions are smooth and enhance the user experience. Check for any performance issues caused by the animations.",
+        "priority": "low",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Support More Input Types",
+        "description": "Support more input types in the interactive calculator interface (e.g., sliders, dropdown menus).",
+        "details": "1.  Extend the `Calculator` component to support more input types.\n2.  Implement slider and dropdown menu components using React Hook Form.\n3.  Update the UI to display the new input types.\n\nRecommended versions:\n*   react-hook-form: ^7.45.4",
+        "testStrategy": "Test the new input types and verify that they work as expected. Check that the calculator calculates the correct result with the new input types.",
+        "priority": "low",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Optimize for Mobile Devices",
+        "description": "Optimize the application for mobile devices.",
+        "details": "1.  Test the application on different mobile devices.\n2.  Optimize the layout and styles for mobile devices.\n3.  Implement touch-friendly interactions.\n\nRecommended versions:\n*   tailwindcss: ^3.3.2",
+        "testStrategy": "Test the application on different mobile devices and verify that the layout is responsive and the UI looks good on all devices. Check for any performance issues on mobile devices.",
+        "priority": "low",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Implement Calculator Sharing Functionality",
+        "description": "Implement functionality to share calculators with other users.",
+        "details": "1.  Generate a unique URL for each calculator.\n2.  Implement a share button to copy the URL to the clipboard.\n3.  Allow users to import calculators from a URL.\n\nRecommended versions:\n*   axios: ^1.4.0",
+        "testStrategy": "Share calculators with other users and verify that they can import the calculators correctly. Check for any errors during the sharing process.",
+        "priority": "low",
+        "dependencies": [
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "Create Formula Template Library",
+        "description": "Create a library of pre-defined formula templates.",
+        "details": "1.  Create a `TemplateLibrary` component to display a list of pre-defined formula templates.\n2.  Allow users to select a template and load it into the formula editor.\n\nRecommended versions:\n*   react-hook-form: ^7.45.4",
+        "testStrategy": "Select different templates from the template library and verify that they are loaded correctly into the formula editor. Check for any errors during the loading process.",
+        "priority": "low",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 15,
+        "title": "Implement Calculation History",
+        "description": "Implement functionality to store and view calculation history.",
+        "details": "1.  Store the calculation history in local storage or a database.\n2.  Create a `CalculationHistory` component to display the calculation history.\n3.  Allow users to view and clear the calculation history.\n\nRecommended versions:\n*   axios: ^1.4.0",
+        "testStrategy": "Perform calculations and verify that the calculation history is stored correctly. View the calculation history and verify that it displays the correct information. Clear the calculation history and verify that it is cleared correctly.",
+        "priority": "low",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-02T07:55:05.512Z",
+      "updated": "2025-07-02T08:16:38.734Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
