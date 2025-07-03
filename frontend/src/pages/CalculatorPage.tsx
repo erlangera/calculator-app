@@ -1,40 +1,131 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getCalculatorById } from '../services/api';
+import { getCalculatorById, ApiError } from '../services/api';
 import type { Calculator } from '../types';
 import { evaluate } from 'mathjs';
 import { motion } from 'framer-motion';
 import ShareModal from "./ShareModal";
+
+// 错误状态类型
+interface ErrorState {
+  hasError: boolean;
+  message: string;
+  type: 'not-found' | 'network' | 'validation' | 'server' | 'unknown';
+  canRetry: boolean;
+}
 
 const CalculatorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [calculator, setCalculator] = useState<Calculator | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorState | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [variableValues, setVariableValues] = useState<Record<string, string>>({});
   const [copySuccess, setCopySuccess] = useState('');
   const [shareUrl, setShareUrl] = useState<string>("");
   const [showShareModal, setShowShareModal] = useState(false);
 
-  useEffect(() => {
-    if (id) {
-      getCalculatorById(id)
-        .then(data => {
-          setCalculator(data);
-          const initialValues: Record<string, string> = {};
-          // 确保 variables 存在且是数组
-          if (data.variables && Array.isArray(data.variables)) {
-            data.variables.forEach(v => { initialValues[v] = '5'; });
-          }
-          setVariableValues(initialValues);
-        })
-        .catch(err => {
-          console.error("Failed to fetch calculator:", err);
-          setError('Calculator not found or an error occurred.');
-        })
-        .finally(() => setLoading(false));
+  // 错误处理函数
+  const handleError = (error: unknown): ErrorState => {
+    if (error instanceof ApiError) {
+      switch (error.code) {
+        case 'NOT_FOUND':
+          return {
+            hasError: true,
+            message: '抱歉，没有找到这个计算器。可能已被删除或链接有误。',
+            type: 'not-found',
+            canRetry: false
+          };
+        case 'INVALID_ID':
+          return {
+            hasError: true,
+            message: '链接格式不正确，请检查URL是否完整。',
+            type: 'validation',
+            canRetry: false
+          };
+        case 'NETWORK':
+          return {
+            hasError: true,
+            message: '网络连接出现问题，请检查网络后重试。',
+            type: 'network',
+            canRetry: true
+          };
+        case 'TIMEOUT':
+          return {
+            hasError: true,
+            message: '请求超时，请稍后重试。',
+            type: 'network',
+            canRetry: true
+          };
+        case 'SERVER':
+          return {
+            hasError: true,
+            message: '服务器暂时不可用，请稍后重试。',
+            type: 'server',
+            canRetry: true
+          };
+        default:
+          return {
+            hasError: true,
+            message: error.message || '加载计算器时出现错误，请稍后重试。',
+            type: 'unknown',
+            canRetry: true
+          };
+      }
     }
+    
+    return {
+      hasError: true,
+      message: '发生未知错误，请稍后重试。',
+      type: 'unknown',
+      canRetry: true
+    };
+  };
+
+  // 加载计算器数据
+  const loadCalculator = async () => {
+    if (!id) {
+      setError({
+        hasError: true,
+        message: '缺少计算器ID参数。',
+        type: 'validation',
+        canRetry: false
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const data = await getCalculatorById(id);
+      setCalculator(data);
+      
+      // 初始化变量值
+      const initialValues: Record<string, string> = {};
+      if (data.variables && Array.isArray(data.variables)) {
+        data.variables.forEach(v => { initialValues[v] = '5'; });
+      }
+      setVariableValues(initialValues);
+      
+    } catch (err) {
+      console.error("Failed to fetch calculator:", err);
+      setError(handleError(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 重试加载
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    loadCalculator();
+  };
+
+  useEffect(() => {
+    loadCalculator();
   }, [id]);
 
   const handleVariableChange = (variable: string, value: string) => {
@@ -93,17 +184,86 @@ const CalculatorPage: React.FC = () => {
     return `${window.location.origin}${basePath}/calculator/${calculator.id}`;
   };
 
+  // 加载状态
   if (loading) {
     return (
       <div className="text-center py-16">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-        <p className="mt-4 text-white/80">加载计算器中...</p>
+        <p className="mt-4 text-white/80">
+          {retryCount > 0 ? `正在重试加载... (${retryCount})` : '加载计算器中...'}
+        </p>
       </div>
     );
   }
   
-  if (error) return <p className="text-center text-red-300 text-lg py-16">{error}</p>;
-  if (!calculator) return <p className="text-center text-white py-16">未找到计算器。</p>;
+  // 错误状态
+  if (error?.hasError) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-3xl p-8 shadow-2xl text-center"
+        >
+          <div className={`text-6xl mb-6 ${
+            error.type === 'not-found' ? '🔍' :
+            error.type === 'network' ? '🌐' :
+            error.type === 'validation' ? '⚠️' :
+            error.type === 'server' ? '🔧' : '❌'
+          }`}>
+            {error.type === 'not-found' ? '🔍' :
+             error.type === 'network' ? '🌐' :
+             error.type === 'validation' ? '⚠️' :
+             error.type === 'server' ? '🔧' : '❌'}
+          </div>
+          
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">
+            {error.type === 'not-found' ? '计算器未找到' :
+             error.type === 'network' ? '网络连接问题' :
+             error.type === 'validation' ? '链接格式错误' :
+             error.type === 'server' ? '服务器错误' : '加载失败'}
+          </h2>
+          
+          <p className="text-gray-600 mb-8 text-lg">{error.message}</p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {error.canRetry && (
+              <button 
+                onClick={handleRetry}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors duration-300"
+              >
+                重试加载
+              </button>
+            )}
+            
+            <button 
+              onClick={() => navigate('/')}
+              className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-colors duration-300"
+            >
+              返回首页
+            </button>
+            
+            {error.type === 'not-found' && (
+              <button 
+                onClick={() => navigate('/new')}
+                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors duration-300"
+              >
+                创建新计算器
+              </button>
+            )}
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+  
+  if (!calculator) {
+    return (
+      <div className="text-center py-16">
+        <p className="text-white">数据加载异常，请刷新页面重试。</p>
+      </div>
+    );
+  }
 
   return (
     <>
