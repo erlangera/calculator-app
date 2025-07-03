@@ -252,8 +252,53 @@
         "dependencies": [
           8
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Generate Unique Calculator URLs",
+            "description": "Implement the logic to generate unique URLs for each calculator, ensuring they point to the calculator details page.",
+            "dependencies": [],
+            "details": "This involves creating a URL structure that includes a unique identifier for each calculator. Consider using a UUID or the calculator's primary key.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Share Button and QR Code Display",
+            "description": "Add a share button to the calculator card on the list page and the calculator details page. Upon clicking, display a modal with the calculator's URL and a QR code representation of the URL.",
+            "dependencies": [
+              1
+            ],
+            "details": "Use a QR code library to generate the QR code. Include a copy-to-clipboard button for the URL.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Calculator Import Functionality",
+            "description": "Allow users to import calculators using the generated URLs. This involves parsing the URL and retrieving the calculator data.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create an import function that takes the URL as input, extracts the calculator ID, and fetches the calculator data from the database. Handle cases where the calculator does not exist.",
+            "status": "deferred",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Handle Edge Cases and Error Handling",
+            "description": "Address potential edge cases such as invalid URLs, non-existent calculators, and network errors during import.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Implement error handling for invalid URLs and non-existent calculators. Display user-friendly error messages. Handle potential network errors during import.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 14,
@@ -284,7 +329,7 @@
     ],
     "metadata": {
       "created": "2025-07-02T07:55:05.512Z",
-      "updated": "2025-07-02T09:31:04.438Z",
+      "updated": "2025-07-03T07:41:46.498Z",
       "description": "Tasks for master context"
     }
   }

@@ -6,12 +6,15 @@ import {
 } from "../services/api";
 import type { Calculator } from "../types";
 import { motion, AnimatePresence } from "framer-motion";
+import ShareModal from "./ShareModal";
 
 const ListPage: React.FC = () => {
   const [calculators, setCalculators] = useState<Calculator[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [shareUrl, setShareUrl] = useState<string>("");
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const fetchCalculators = () => {
     setLoading(true);
@@ -146,14 +149,10 @@ const ListPage: React.FC = () => {
                         <button
                           onClick={() => {
                             const base = import.meta.env.VITE_BASE || "";
-                            const basePath = base.endsWith("/")
-                              ? base.slice(0, -1)
-                              : base;
+                            const basePath = base.endsWith("/") ? base.slice(0, -1) : base;
                             const url = `${window.location.origin}${basePath}/calculator/${calculator.id}`;
-                            navigator.clipboard
-                              .writeText(url)
-                              .then(() => alert("链接已复制到剪贴板！"))
-                              .catch(() => alert("复制失败"));
+                            setShareUrl(url);
+                            setShowShareModal(true);
                           }}
                           className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 w-auto min-w-[56px] text-center"
                         >
@@ -194,6 +193,7 @@ const ListPage: React.FC = () => {
           </AnimatePresence>
         )}
       </div>
+      <ShareModal open={showShareModal} url={shareUrl} onClose={() => setShowShareModal(false)} />
     </motion.div>
   );
 };
