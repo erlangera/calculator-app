@@ -301,57 +301,64 @@ const CalculatorPage: React.FC = () => {
           {/* Input Parameters */}
           <div className="mb-8">
             <h3 className="text-xl font-semibold text-gray-800 mb-6">输入参数</h3>
-            <div className="space-y-4">
-              {calculator.variables && calculator.variables.length > 0 ? (
-                calculator.variables.map(variable => (
-                  <div key={variable} className="flex flex-wrap items-center bg-gray-50 p-4 rounded-xl gap-2">
-                    <label className="min-w-[100px] text-lg font-semibold text-brand-from capitalize">
-                      {calculator.variableLabels?.[variable] || variable} ({variable}):
+            {/* 变量输入区域 - 移动端优化 */}
+            {calculator.variables && calculator.variables.length > 0 && (
+              <div className="grid grid-cols-1 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                {calculator.variables.map(variable => (
+                  <div key={variable} className="bg-gray-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl">
+                    <label className="block text-sm sm:text-base font-medium text-gray-700 mb-2 sm:mb-3">
+                      {calculator.variableLabels?.[variable] || variable}
                     </label>
                     <input
                       type="number"
+                      inputMode="decimal"
+                      step="any"
+                      placeholder="输入数值"
                       value={variableValues[variable] || ''}
                       onChange={(e) => handleVariableChange(variable, e.target.value)}
-                      placeholder={`请输入${calculator.variableLabels?.[variable] || variable}`}
-                      className="w-full sm:flex-1 max-w-[220px] ml-0 sm:ml-5 px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-brand-from focus:bg-white transition-all duration-300 text-lg text-black"
+                      className="w-full px-4 py-4 sm:py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-from focus:border-transparent transition-all duration-300 text-lg sm:text-lg touch-manipulation"
+                      style={{ fontSize: '16px' }} // 防止iOS Safari缩放
                     />
                   </div>
-                ))
-              ) : (
-                <div className="text-center text-gray-500">
-                  该公式不需要输入参数
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Result Section */}
           <div className="text-center mb-8">
             <h3 className="text-xl font-medium text-gray-800 mb-4">计算结果</h3>
-            <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-2xl">
-              <div className="text-4xl font-bold">
-                {isNaN(result) ? '...' : result.toFixed(2)}
+            {/* Result Display - 移动端优化 */}
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 border-3 border-green-400 rounded-xl sm:rounded-2xl p-6 sm:p-8 mb-6 sm:mb-8 text-center">
+              <h3 className="text-base sm:text-lg font-medium text-gray-700 mb-3 sm:mb-4">计算结果</h3>
+              <div className="text-2xl sm:text-4xl font-bold text-gray-800 break-words">
+                {isNaN(result) ? (
+                  <span className="text-gray-400 text-lg sm:text-2xl">请输入所有参数</span>
+                ) : (
+                  <span className="text-green-600">{result.toLocaleString()}</span>
+                )}
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <button 
               onClick={handleReset}
-              className="px-6 py-3 bg-transparent border-2 border-brand-from text-brand-from rounded-xl font-medium hover:bg-brand-from hover:text-white transition-all duration-300"
+              className="w-full sm:w-auto min-w-[120px] px-6 py-4 sm:py-3 bg-transparent border-2 border-brand-from text-brand-from rounded-xl font-medium hover:bg-brand-from hover:text-white transition-all duration-300 touch-manipulation text-base"
             >
               重置
             </button>
             <button 
               onClick={handleCopyResult}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors duration-300"
+              className="w-full sm:w-auto min-w-[120px] px-6 py-4 sm:py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors duration-300 touch-manipulation text-base"
+              disabled={isNaN(result)}
             >
               {copySuccess || '复制结果'}
             </button>
             <button 
               onClick={() => navigate('/')}
-              className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-colors duration-300"
+              className="w-full sm:w-auto min-w-[120px] px-6 py-4 sm:py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-colors duration-300 touch-manipulation text-base"
             >
               返回列表
             </button>

@@ -142,115 +142,127 @@ const ShareModal: React.FC<ShareModalProps> = ({ open, url, onClose }) => {
     });
   };
 
-  // 手动选择文本
-  const handleTextSelect = (event: React.MouseEvent<HTMLDivElement>) => {
-    const selection = window.getSelection();
-    const range = document.createRange();
-    range.selectNodeContents(event.currentTarget);
-    selection?.removeAllRanges();
-    selection?.addRange(range);
-  };
+
 
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        <button
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-          onClick={onClose}
-          aria-label="关闭分享窗口"
-        >
-          ×
-        </button>
-        
-        {/* 状态提示 */}
-        {copyState.status !== 'idle' && (
-          <div className={`fixed left-1/2 -translate-x-1/2 top-4 px-5 py-2 text-white text-base rounded shadow z-[9999] ${
-            copyState.status === 'success' ? 'bg-green-500' : 'bg-red-500'
-          }`}>
-            {copyState.message}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto shadow-xl">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800">分享计算器</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 transition-colors p-2 -m-2 ml-auto sm:ml-0 touch-manipulation"
+            aria-label="关闭"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* URL验证警告 */}
+        {!urlValidation.isValid && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-red-700 text-sm">{urlValidation.message}</span>
+            </div>
           </div>
         )}
-        
-        <h3 className="text-lg font-bold mb-6 text-gray-800 text-center pr-8">分享此计算器</h3>
-        
-        <div className="flex flex-col items-center gap-6">
-          {/* QR码区域 */}
-          <div className="flex flex-col items-center">
-            {urlValidation.isValid && !qrState.hasError ? (
-              <div className="p-4 bg-white border-2 border-gray-200 rounded-lg">
-                <QRCodeCanvas 
-                  value={url} 
-                  size={128}
-                  level="M"
-                  onError={handleQRError}
+
+        {urlValidation.isValid && (
+          <>
+            {/* 分享链接区域 */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                分享链接
+              </label>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  value={url}
+                  readOnly
+                  className="flex-1 px-4 py-3 sm:py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 text-sm select-all touch-manipulation"
+                  style={{ fontSize: '16px' }} // 防止iOS Safari缩放
                 />
+                <button
+                  onClick={handleCopy}
+                  className="px-6 py-3 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-300 touch-manipulation text-sm sm:text-base whitespace-nowrap"
+                >
+                  复制链接
+                </button>
               </div>
-            ) : (
-              <div className="p-4 bg-gray-100 border-2 border-gray-200 rounded-lg flex items-center justify-center w-32 h-32">
-                <div className="text-center text-gray-500">
-                  <div className="text-2xl mb-2">⚠️</div>
-                  <div className="text-xs">
-                    {qrState.hasError ? qrState.errorMessage : urlValidation.message}
-                  </div>
+              
+              {/* 复制状态反馈 */}
+              {copyState.status !== 'idle' && (
+                <div className={`mt-3 p-2 rounded-lg text-sm ${
+                  copyState.status === 'success' 
+                    ? 'bg-green-50 text-green-700' 
+                    : 'bg-red-50 text-red-700'
+                }`}>
+                  {copyState.message}
                 </div>
-              </div>
-            )}
-          </div>
-          
-          {/* URL显示区域 */}
-          <div className="w-full">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              分享链接：
-            </label>
-            <div 
-              className={`w-full break-all text-center text-sm p-3 rounded border-2 cursor-pointer transition-colors ${
-                urlValidation.isValid 
-                  ? 'text-gray-600 bg-gray-50 border-gray-200 hover:bg-gray-100' 
-                  : 'text-red-600 bg-red-50 border-red-200'
-              }`}
-              onClick={handleTextSelect}
-              title="点击选择文本"
-            >
-              {url || '链接生成失败'}
+              )}
+              
+              {!isClipboardSupported() && (
+                <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-yellow-700 text-xs sm:text-sm">
+                    📱 提示：如果复制失败，请手动选择上方链接并复制
+                  </p>
+                </div>
+              )}
             </div>
-            {!urlValidation.isValid && (
-              <p className="text-red-500 text-xs mt-1">{urlValidation.message}</p>
-            )}
-          </div>
-          
-          {/* 操作按钮 */}
-          <div className="flex flex-col w-full gap-3">
-            <button
-              className={`w-full font-semibold py-3 px-4 rounded-lg transition-all duration-200 ${
-                urlValidation.isValid
-                  ? 'bg-brand-from hover:bg-brand-to text-white'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
-              onClick={handleCopy}
-              disabled={!urlValidation.isValid || copyState.status === 'idle' && copyState.message === '正在复制...'}
-            >
-              {copyState.status === 'idle' && copyState.message === '正在复制...' ? '复制中...' : '复制链接'}
-            </button>
-            
-            {/* 备用提示 */}
-            {copyState.status === 'error' && (
-              <p className="text-xs text-gray-500 text-center">
-                提示：您也可以点击上方链接区域手动选择并复制
-              </p>
-            )}
-          </div>
-          
-          {/* 分享提示 */}
-          <div className="text-xs text-gray-500 text-center border-t pt-4 w-full">
-            <p>💡 扫描二维码或复制链接即可分享给他人</p>
-            {!isClipboardSupported() && (
-              <p className="mt-1 text-orange-600">
-                您的浏览器不支持自动复制，请手动选择链接文本
-              </p>
-            )}
-          </div>
+
+            {/* QR码区域 */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                扫码分享
+              </label>
+              <div className="flex justify-center bg-gray-50 p-6 rounded-lg">
+                {qrState.hasError ? (
+                  <div className="flex flex-col items-center gap-2 text-gray-500">
+                    <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-sm text-center">{qrState.errorMessage}</span>
+                  </div>
+                ) : (
+                  <QRCodeCanvas
+                    value={url}
+                    size={120}
+                    level="M"
+                    includeMargin={true}
+                    onError={handleQRError}
+                    className="border border-gray-200 rounded"
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* 移动端使用提示 */}
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 className="font-medium text-blue-800 mb-2 text-sm">📱 移动端分享提示</h4>
+              <ul className="text-blue-700 text-xs sm:text-sm space-y-1">
+                <li>• 点击"复制链接"将链接复制到剪贴板</li>
+                <li>• 使用相机扫描二维码快速打开</li>
+                <li>• 链接可以通过微信、QQ等社交应用分享</li>
+              </ul>
+            </div>
+          </>
+        )}
+
+        {/* 关闭按钮 */}
+        <div className="flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors duration-300 touch-manipulation text-sm sm:text-base"
+          >
+            关闭
+          </button>
         </div>
       </div>
     </div>

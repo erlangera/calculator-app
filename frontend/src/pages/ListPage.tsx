@@ -249,13 +249,27 @@ const ListPage: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-          <input
-            type="text"
-            placeholder="搜索计算器..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-3 border border-white/20 rounded-xl bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/20 transition-all duration-300 min-w-[250px]"
-          />
+          {/* 搜索框 - 移动端优化 */}
+          <div className="mb-6 sm:mb-8">
+            <div className="relative max-w-md mx-auto">
+              <input
+                type="text"
+                placeholder="搜索计算器..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-3 pl-12 text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-from focus:border-transparent transition-all duration-300 touch-manipulation"
+                style={{ fontSize: '16px' }} // 防止iOS Safari缩放
+              />
+              <svg 
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
           <Link
             to="/new"
             className="bg-gradient-to-r from-brand-from to-brand-to hover:from-brand-to hover:to-brand-from text-white font-bold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg whitespace-nowrap text-center"
@@ -266,7 +280,7 @@ const ListPage: React.FC = () => {
       </div>
 
       {/* Calculators Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {loading ? (
           <div className="col-span-full text-center py-16">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
@@ -274,67 +288,63 @@ const ListPage: React.FC = () => {
           </div>
         ) : filteredCalculators.length > 0 ? (
           <AnimatePresence>
-            {filteredCalculators.map((calculator) => (
+            {filteredCalculators.map((calculator, index) => (
               <motion.div
                 key={calculator.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                whileHover={{ y: -5 }}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 hover:bg-white/20 transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white rounded-xl sm:rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold text-white truncate flex-1 mr-2">
-                    {calculator.title}
-                  </h3>
-                </div>
-
-                <p className="text-white/80 mb-4 h-12 overflow-hidden">
-                  {calculator.description || "无描述"}
-                </p>
-
-                <div className="bg-black/20 p-3 rounded-lg mb-6">
-                  <code className="text-green-300 font-mono text-sm break-all">
-                    {calculator.formula}
-                  </code>
-                </div>
-
-                <div className="flex justify-between items-center text-xs text-white/60 mb-4">
-                  <span>
-                    创建时间: {new Date(calculator.createdAt).toLocaleDateString()}
-                  </span>
-                  <span>变量: {calculator.variables?.length || 0}个</span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="flex flex-col gap-2">
+                <div className="p-4 sm:p-6">
+                  <div className="flex justify-between items-start mb-3 sm:mb-4">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-800 line-clamp-2">
+                      {calculator.title}
+                    </h3>
+                    <div className="flex gap-2 flex-shrink-0 ml-2">
+                      {/* 分享按钮 - 移动端优化 */}
+                      <button
+                        onClick={() => handleShare(calculator)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-300 touch-manipulation"
+                        aria-label="分享计算器"
+                        title="分享计算器"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                        </svg>
+                      </button>
+                      {/* 删除按钮 - 移动端优化 */}
+                      <button
+                        onClick={() => handleDelete(calculator.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300 touch-manipulation"
+                        aria-label="删除计算器"
+                        title="删除计算器"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-600 text-sm sm:text-base mb-4 line-clamp-3">
+                    {calculator.description}
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <Link
                       to={`/calculator/${calculator.id}`}
-                      className="bg-brand-from hover:bg-brand-to text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 text-center"
+                      className="flex-1 bg-brand-from hover:bg-brand-to text-white text-center py-3 px-4 rounded-lg font-medium transition-colors duration-300 touch-manipulation text-sm sm:text-base"
                     >
-                      使用
+                      使用计算器
                     </Link>
                     <Link
                       to={`/edit/${calculator.id}`}
-                      className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300 text-center"
+                      className="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors duration-300 touch-manipulation text-sm sm:text-base"
                     >
                       编辑
                     </Link>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <button
-                      onClick={() => handleShare(calculator)}
-                      className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
-                    >
-                      分享
-                    </button>
-                    <button
-                      onClick={() => handleDelete(calculator.id)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
-                    >
-                      删除
-                    </button>
                   </div>
                 </div>
               </motion.div>
