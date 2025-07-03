@@ -144,7 +144,7 @@ const CalculatorPage: React.FC = () => {
             <div className="space-y-4">
               {calculator.variables && calculator.variables.length > 0 ? (
                 calculator.variables.map(variable => (
-                  <div key={variable} className="flex items-center bg-gray-50 p-4 rounded-xl">
+                  <div key={variable} className="flex flex-wrap items-center bg-gray-50 p-4 rounded-xl gap-2">
                     <label className="min-w-[100px] text-lg font-semibold text-brand-from capitalize">
                       {calculator.variableLabels?.[variable] || variable} ({variable}):
                     </label>
@@ -153,7 +153,7 @@ const CalculatorPage: React.FC = () => {
                       value={variableValues[variable] || ''}
                       onChange={(e) => handleVariableChange(variable, e.target.value)}
                       placeholder={`请输入${calculator.variableLabels?.[variable] || variable}`}
-                      className="flex-1 ml-5 px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-brand-from focus:bg-white transition-all duration-300 text-lg text-black"
+                      className="w-full sm:flex-1 max-w-[220px] ml-0 sm:ml-5 px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-brand-from focus:bg-white transition-all duration-300 text-lg text-black"
                     />
                   </div>
                 ))
